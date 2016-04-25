@@ -10,14 +10,40 @@ var Auth = require('../index');
 
 AWS.config.region = 'us-east-1';
 
-
-beforeEach((done) => {
-  done();
+before((done) => {
+  //create the default user
+  var defaultUser = {
+    "body": {
+      "email": "login@you2.com",
+      "password": "garbage8",
+      "properties": {
+        "firstName": "John",
+        "lastName": "Doe"
+      }
+    },
+    "context": {
+      "http-method": "POST",
+      "resource-path": "/registrations"
+    }
+  }
+  context.fail = (error) => {
+    expect(error).to.not.exist;
+    done();
+  };
+  context.succeed = (response) => {
+    expect(response).to.exist;
+    done();
+  }
+  Auth.handler(defaultUser, context);
 })
 
 var context = {
-  fail: function (error) {},
-  succeed: function (response) {},
+  fail: function (error) {
+    return (error);
+  },
+  succeed: function (response) {
+    return (response);
+  },
   done: function (error, response) {
     if (error) {
       this.fail(error);
@@ -47,6 +73,10 @@ describe('Login:@integration', () => {
       expect(obj.name).to.equal('ValidationError');
       done();
     };
+    context.succeed = (response) => {
+      expect(response).to.not.exist;
+      done();
+    }
 
     Auth.handler(badContext, context);
   });
@@ -56,7 +86,7 @@ describe('Login:@integration', () => {
       "params": {
         "querystring": {
           "password": "garbage8",
-          "email": "you@you3.com"
+          "email": "reallyyou@you4you.com"
         }
       },
       "context": {
@@ -76,12 +106,13 @@ describe('Login:@integration', () => {
     }
     Auth.handler(badEmail, context);
   });
+
   it('should fail when invoking with an invalid password', (done) => {
     var badPassword = {
       "params": {
         "querystring": {
           "password": "garbage9",
-          "email": "you@you2.com"
+          "email": "login@you2.com"
         }
       },
       "context": {
@@ -101,12 +132,13 @@ describe('Login:@integration', () => {
     }
     Auth.handler(badPassword, context);
   });
+
   it('should respond with a token when invoking with a valid username and password', (done) => {
     var goodLogin = {
       "params": {
         "querystring": {
           "password": "garbage8",
-          "email": "you@you2.com"
+          "email": "login@you2.com"
         }
       },
       "context": {
@@ -125,4 +157,32 @@ describe('Login:@integration', () => {
     }
     Auth.handler(goodLogin, context);
   });
+});
+
+after((done) => {
+  // remove the default user, so it can be created on the next test run
+  var email = "login@you2.com"
+  var defaultUser = {
+    "params": {
+      "path": {
+        "email": email
+      }
+    },
+    "context": {
+      "http-method": "DELETE",
+      "resource-path": "/registrations/{email}"
+    }
+  }
+  context.fail = (error) => {
+    // ignore errors
+    expect(error).to.not.exist;
+    done();
+  };
+
+  context.succeed = (response) => {
+    expect(response).to.exist;
+    done();
+  }
+
+  Auth.handler(defaultUser, context);
 });
