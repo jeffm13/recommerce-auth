@@ -13,10 +13,13 @@ deploy:
   provider: lambda
   skip_cleanup: true
   edge: true
-  access_key_id:
-  secret_access_key:
+  access_key_id: 
+  secret_access_key: 
   function_name: recommerce-auth
   handler_name: handler
   runtime: nodejs4.3
   role: 
   zip_file: dist.zip
+before_install:
+- openssl aes-256-cbc -K $encrypted_68c26b5cefa4_key -iv $encrypted_68c26b5cefa4_iv
+  -in recommerce-secret.json.enc -out recommerce-secret.json -d
