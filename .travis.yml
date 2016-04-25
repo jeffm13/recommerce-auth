@@ -1,0 +1,22 @@
+language: node_js
+node_js:
+- 4.3.2
+sudo: required
+dist: trusty
+cache:
+  directories: node_modules
+before_script:
+- npm install -g gulp
+script: gulp test
+after_success: gulp dist
+deploy:
+  provider: lambda
+  skip_cleanup: true
+  edge: true
+  access_key_id:
+  secret_access_key:
+  function_name: recommerce-auth
+  handler_name: handler
+  runtime: nodejs4.3
+  role: 
+  zip_file: dist.zip
