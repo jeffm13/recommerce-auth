@@ -63,7 +63,7 @@ describe('Login:@integration', () => {
         }
       },
       "context": {
-        "http-method": "GET",
+        "http-method": "GET"
       }
     }
 
@@ -79,6 +79,58 @@ describe('Login:@integration', () => {
     }
 
     Auth.handler(badContext, context);
+  });
+
+  it('should fail when invoking with no parameters', (done) => {
+    var noParams = {
+      "params": {},
+      "context": {
+        "http-method": "GET",
+        "resource-path": "/login"
+      }
+    }
+
+    context.fail = (error) => {
+      expect(error).to.exist;
+      var obj = JSON.parse(error);
+      expect(obj.statusCode).to.equal(400);
+      expect(obj.details[0].message).to.contain('querystring');
+      done();
+    };
+    context.succeed = (response) => {
+      expect(response).to.not.exist;
+      done();
+    }
+
+    Auth.handler(noParams, context);
+  });
+
+  it('should fail when invoking with a malformed email address', (done) => {
+    var malformedEmail = {
+      "params": {
+        "querystring": {
+          "password": "garbage8",
+          "email": "reallyyou@"
+        }
+      },
+      "context": {
+        "http-method": "GET",
+        "resource-path": "/login"
+      }
+    }
+    context.fail = (error) => {
+      expect(error).to.exist;
+      var obj = JSON.parse(error);
+      var obj = JSON.parse(error);
+      expect(obj.statusCode).to.equal(400);
+      expect(obj.details[0].path).to.equal('params.querystring.email');
+      done();
+    };
+    context.succeed = (response) => {
+      expect(response).to.not.exist;
+      done();
+    }
+    Auth.handler(malformedEmail, context);
   });
 
   it('should fail when invoking with an invalid email address', (done) => {
