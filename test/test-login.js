@@ -27,6 +27,7 @@ before((done) => {
     }
   }
   context.fail = (error) => {
+    console.log('login::before:fail:error = ' + error)
     expect(error).to.not.exist;
     done();
   };
@@ -38,13 +39,13 @@ before((done) => {
 })
 
 var context = {
-  fail: function (error) {
+  fail: function(error) {
     return (error);
   },
-  succeed: function (response) {
+  succeed: function(response) {
     return (response);
   },
-  done: function (error, response) {
+  done: function(error, response) {
     if (error) {
       this.fail(error);
     } else {
@@ -70,7 +71,8 @@ describe('Login:@integration', () => {
     context.fail = (error) => {
       expect(error).to.exist;
       var obj = JSON.parse(error);
-      expect(obj.name).to.equal('ValidationError');
+      expect(obj.statusCode).to.equal(400);
+      expect(obj.message).to.contain('resource-path');
       done();
     };
     context.succeed = (response) => {
@@ -93,7 +95,8 @@ describe('Login:@integration', () => {
     context.fail = (error) => {
       expect(error).to.exist;
       var obj = JSON.parse(error);
-      expect(obj.statusCode).to.equal(400);
+      console.log('login::noParams:fail:error = ' + error)
+        //      expect(obj.statusCode).to.equal(400);
       expect(obj.details[0].message).to.contain('querystring');
       done();
     };
@@ -199,14 +202,17 @@ describe('Login:@integration', () => {
       }
     };
     context.fail = (error) => {
+      console.log('test-login::validusername:fail:' + JSON.stringify(error));
       expect(error).to.not.exist;
       done();
     };
     context.succeed = (response) => {
       expect(response).to.exist;
+      console.log("test-login::validusername:response" + JSON.stringify(response))
       expect(response.token).to.exist;
       done();
     }
+    console.log('test-login::validusername:start')
     Auth.handler(goodLogin, context);
   });
 });
