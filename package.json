@@ -13,8 +13,8 @@
     "boom": "^3.1.2",
     "hoek": "^4.0.0",
     "joi": "^8.0.5",
-    "jsonwebtoken": "^5.7.0",
-    "lambda-time": "^0.4.2",
+    "jsonwebtoken": "5.7.0",
+    "lambda-time": "^0.4.9",
     "lodash": "^4.11.1",
     "scrypt-for-humans": "^2.0.5",
     "uuid": "^2.0.2"
@@ -24,7 +24,7 @@
     "url": "git+https://github.com/recommerce-io/recommerce-auth.git"
   },
   "devDependencies": {
-    "aws-sdk": "^2.3.5",
+    "aws-sdk": "^2.3.7",
     "chai": "^3.5.0",
     "del": "^2.2.0",
     "dynamodb-doc": "^1.0.0",
