@@ -39,9 +39,9 @@ before((done) => {
 })
 
 var context = {
-  fail: function (error) {},
-  succeed: function (response) {},
-  done: function (error, response) {
+  fail: function(error) {},
+  succeed: function(response) {},
+  done: function(error, response) {
     if (error) {
       this.fail(error);
     } else {
@@ -67,7 +67,7 @@ describe('Registrations:@integration', () => {
     context.fail = (error) => {
       expect(error).to.exist;
       var obj = JSON.parse(error);
-      expect(obj.name).to.equal('ValidationError');
+      expect(obj.statusCode).to.equal(400)
       done();
     };
     context.succeed = (response) => {
